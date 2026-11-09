@@ -22,7 +22,8 @@ architecture and roadmap.
 ## Install
 
 ```bash
-make install          # installs to /usr/local (override with PREFIX=...)
+make install                              # system-wide, /usr/local (needs root)
+make install PREFIX="$HOME/.local"        # per-user, no root required
 ```
 
 This builds the release binary, installs the desktop entry and icon, so
