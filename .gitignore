@@ -1,0 +1,4 @@
+/target
+*.keybindchanger.bak
+*.kbc-backup
+.DS_Store
