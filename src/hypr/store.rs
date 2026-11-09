@@ -381,18 +381,12 @@ fn render_lua_block(
 
     if enabled {
         let command = command.trim();
-        let description = if description.trim().is_empty() {
-            "nil".to_string()
-        } else {
-            lua_string(description)
-        };
         let dispatcher = render_lua_dispatcher(command);
-        let options = render_lua_options(mouse, release, repeat);
+        let options = render_lua_options(description, mouse, release, repeat);
         let _ = writeln!(
             out,
-            "o.bind({}, {}, {}{})",
+            "hl.bind({}, {}{})",
             lua_string(&keys.canonical()),
-            description,
             dispatcher,
             options
         );
@@ -445,23 +439,26 @@ fn render_conf_block(
 }
 
 fn render_lua_dispatcher(command: &str) -> String {
-    if command.starts_with("hl.") || command.starts_with("__") {
+    if command.starts_with("hl.") {
         command.to_string()
     } else {
-        lua_string(command)
+        format!("hl.dsp.exec_cmd({})", lua_string(command))
     }
 }
 
-fn render_lua_options(mouse: bool, release: bool, repeat: bool) -> String {
+fn render_lua_options(description: &str, mouse: bool, release: bool, repeat: bool) -> String {
     let mut options = Vec::new();
+    if !description.trim().is_empty() {
+        options.push(format!("description = {}", lua_string(description)));
+    }
     if mouse {
-        options.push("mouse = true");
+        options.push("click = true".to_string());
     }
     if release {
-        options.push("release = true");
+        options.push("release = true".to_string());
     }
     if repeat {
-        options.push("repeat = true");
+        options.push("repeating = true".to_string());
     }
     if options.is_empty() {
         String::new()
@@ -724,7 +721,9 @@ mod tests {
             false,
             true,
         );
-        assert!(block.contains(r#"o.bind("SUPER + SHIFT + S", "Screenshot \"area\"", "grim -g \"$region\" - | swappy -f -")"#));
+        assert!(block.contains(
+            r#"hl.bind("SUPER + SHIFT + S", hl.dsp.exec_cmd("grim -g \"$region\" - | swappy -f -"), { description = "Screenshot \"area\"" })"#
+        ));
 
         let raw = render_lua_block(
             "id2",
@@ -737,7 +736,7 @@ mod tests {
             true,
         );
         assert!(raw.contains(
-            "o.bind(\"SUPER + SHIFT + S\", \"Resize\", hl.dsp.window.resize(), { mouse = true })"
+            "hl.bind(\"SUPER + SHIFT + S\", hl.dsp.window.resize(), { description = \"Resize\", click = true })"
         ));
     }
 
@@ -814,7 +813,9 @@ hl.unbind("SUPER + Q")
         let content = std::fs::read_to_string(hypr.join("bindings.lua")).unwrap();
         assert!(content.contains(&format!("keybindchanger:{id}")));
         assert!(content.contains(r#"hl.unbind("SUPER + SHIFT + T")"#));
-        assert!(content.contains(r#"o.bind("SUPER + SHIFT + T", "Terminal", "foot")"#));
+        assert!(content.contains(
+            r#"hl.bind("SUPER + SHIFT + T", hl.dsp.exec_cmd("foot"), { description = "Terminal" })"#
+        ));
         assert!(hypr.join("bindings.lua.keybindchanger.bak").exists());
 
         let entry = std::fs::read_to_string(hypr.join("hyprland.lua")).unwrap();

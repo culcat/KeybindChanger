@@ -60,7 +60,7 @@ lines. Every change becomes a marked block at the end of
 ```lua
 -- >>> keybindchanger:1f3a9c2b7d4e5f60 >>>
 hl.unbind("SUPER + RETURN")
-o.bind("SUPER + SHIFT + T", "Terminal", "foot")
+hl.bind("SUPER + SHIFT + T", hl.dsp.exec_cmd("foot"), { description = "Terminal" })
 -- <<< keybindchanger:1f3a9c2b7d4e5f60 <<<
 ```
 

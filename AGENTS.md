@@ -83,7 +83,7 @@ block appended to `~/.config/hypr/bindings.lua` (Lua mode) or
 ```lua
 -- >>> keybindchanger:1f3a9c2b7d4e5f60 >>>
 hl.unbind("SUPER + RETURN")
-o.bind("SUPER + SHIFT + T", "Terminal", "foot")
+hl.bind("SUPER + SHIFT + T", hl.dsp.exec_cmd("foot"), { description = "Terminal" })
 -- <<< keybindchanger:1f3a9c2b7d4e5f60 <<<
 ```
 
@@ -93,7 +93,11 @@ Rules:
   binding replaces its block in place; deleting it removes the override and
   restores the default.
 - "Disable" writes a block containing only `hl.unbind("...")`.
-- `hl.unbind` always precedes `o.bind` so the original registration is removed.
+- `hl.unbind` always precedes `hl.bind` so the original registration is removed.
+- The managed block uses the native `hl.bind` API (not Omarchy's `o.bind`
+  helper) so it works in any Hyprland Lua config. Plain shell commands are
+  wrapped as `hl.dsp.exec_cmd("…")`; raw `hl.dsp.*` dispatchers are written
+  as-is.
 - Writing is atomic (temp file + rename) and only happens after a timestamped
   backup (`<file>.keybindchanger.bak`).
 - After a successful write, run `hyprctl reload` and surface

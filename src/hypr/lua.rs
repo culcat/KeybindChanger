@@ -158,7 +158,7 @@ pub fn parse_source(src: &str, path: &Path) -> Vec<Action> {
                     });
                     let description = options
                         .as_ref()
-                        .and_then(|t| t.get("description"))
+                        .and_then(|t| t.get("description").or_else(|| t.get("desc")))
                         .and_then(Value::as_str)
                         .unwrap_or_default()
                         .to_string();
@@ -174,9 +174,9 @@ pub fn parse_source(src: &str, path: &Path) -> Vec<Action> {
                         description,
                         command,
                         raw_dispatcher,
-                        mouse: table_bool(&options, "mouse"),
+                        mouse: table_bool(&options, "mouse") || table_bool(&options, "click"),
                         release: table_bool(&options, "release"),
-                        repeat: table_bool(&options, "repeat"),
+                        repeat: table_bool(&options, "repeating") || table_bool(&options, "repeat"),
                         file: path.to_path_buf(),
                         line,
                         managed_id: managed_id.clone(),
