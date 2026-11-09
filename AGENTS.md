@@ -150,4 +150,4 @@ Rules:
 - [x] GUI: list, search, filters, edit/add/disable dialogs
 - [x] Key capture widget
 - [x] Managed-block writer with backup + reload
-- [ ] Packaging (desktop entry, icon), installation docs
+- [x] Packaging (desktop entry, icon), installation docs

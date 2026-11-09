@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=KeybindChanger
+GenericName=Hyprland Keybinding Manager
+Comment=View, edit and create Hyprland keybindings
+Exec=keybindchanger
+Icon=io.github.culcat.KeybindChanger
+Terminal=false
+Categories=Settings;
+Keywords=hyprland;keybind;shortcut;hotkey;omarchy;
+StartupNotify=true
