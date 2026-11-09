@@ -40,10 +40,6 @@ pub struct Mods {
 }
 
 impl Mods {
-    pub fn is_empty(self) -> bool {
-        !(self.super_ || self.ctrl || self.alt || self.shift)
-    }
-
     pub fn contains(self, modifier: Modifier) -> bool {
         match modifier {
             Modifier::Super => self.super_,
@@ -145,13 +141,6 @@ impl KeyCombo {
     pub fn match_key(&self) -> String {
         format!("{}|{}", self.mods.match_token(), self.key.to_lowercase())
     }
-
-    pub fn with_key(&self, key: impl Into<String>) -> Self {
-        Self {
-            mods: self.mods,
-            key: normalize_key(&key.into()),
-        }
-    }
 }
 
 impl fmt::Display for KeyCombo {
@@ -181,14 +170,6 @@ impl Source {
             Source::Managed => "custom",
             Source::ConfFile => "conf",
         }
-    }
-
-    /// True when the app may modify this entry directly.
-    pub fn is_user_owned(self) -> bool {
-        matches!(
-            self,
-            Source::UserConfig | Source::Managed | Source::ConfFile
-        )
     }
 }
 
@@ -279,7 +260,6 @@ pub struct DisabledBinding {
     pub description: String,
     pub command: Option<String>,
     pub managed_id: Option<String>,
-    pub source: Source,
 }
 
 pub fn parse_modifier(token: &str) -> Option<Modifier> {

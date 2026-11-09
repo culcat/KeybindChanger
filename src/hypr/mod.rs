@@ -4,6 +4,8 @@ pub mod conf;
 pub mod lua;
 pub mod store;
 
+pub use store::Store;
+
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
@@ -67,10 +69,10 @@ impl ConfigPaths {
 
     /// True when `path` belongs to the read-only system defaults.
     pub fn is_system_file(&self, path: &Path) -> bool {
-        if let Some(root) = &self.omarchy_dir {
-            if path.starts_with(root) {
-                return true;
-            }
+        if let Some(root) = &self.omarchy_dir
+            && path.starts_with(root)
+        {
+            return true;
         }
         path.starts_with("/usr/share/omarchy") || path.starts_with("/usr/share/hypr")
     }

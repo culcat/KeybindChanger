@@ -81,7 +81,6 @@ impl Store {
                                     .unwrap_or_default(),
                                 command: removed.as_ref().and_then(|b| b.command.clone()),
                                 managed_id: unbind.managed_id,
-                                source: source_for(&paths, &unbind.file, None),
                             },
                         );
                     }
@@ -472,8 +471,8 @@ fn render_lua_options(mouse: bool, release: bool, repeat: bool) -> String {
 }
 
 fn split_conf_command(command: &str) -> (&str, &str) {
-    if let Some((dispatcher, args)) = command.split_once(' ') {
-        if matches!(
+    if let Some((dispatcher, args)) = command.split_once(' ')
+        && matches!(
             dispatcher,
             "exec"
                 | "execr"
@@ -485,9 +484,9 @@ fn split_conf_command(command: &str) -> (&str, &str) {
                 | "togglefloating"
                 | "fullscreen"
                 | "togglespecialworkspace"
-        ) {
-            return (dispatcher, args);
-        }
+        )
+    {
+        return (dispatcher, args);
     }
     ("exec", command)
 }

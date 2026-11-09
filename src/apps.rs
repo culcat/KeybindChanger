@@ -20,9 +20,7 @@ impl DesktopApp {
     /// GUI applications are launched directly; terminal applications go through
     /// `gtk-launch` so the desktop entry's `Terminal=true` is honoured.
     pub fn launch_command(&self) -> String {
-        if self.terminal {
-            format!("gtk-launch {}", self.id)
-        } else if self.exec.is_empty() {
+        if self.terminal || self.exec.is_empty() {
             format!("gtk-launch {}", self.id)
         } else {
             self.exec.clone()
@@ -74,7 +72,7 @@ pub fn discover() -> Vec<DesktopApp> {
         }
     }
 
-    apps.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
+    apps.sort_by_key(|a| a.name.to_lowercase());
     apps
 }
 

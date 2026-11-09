@@ -48,8 +48,6 @@ fn parse_into(path: &Path, home: &Path, actions: &mut Vec<Action>, visited: &mut
             if let Some((mods, key_name)) = parse_mods_key(value) {
                 actions.push(Action::Unbind(UnbindAction {
                     keys: KeyCombo::new(mods, key_name),
-                    file: path.to_path_buf(),
-                    line: line_no,
                     managed_id: None,
                 }));
             }

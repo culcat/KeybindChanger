@@ -144,10 +144,10 @@ Rules:
 ## Roadmap
 
 - [x] Project scaffold, AGENTS.md
-- [ ] Lua + conf parsers and merge logic
-- [ ] Live bindings via `hyprctl`
-- [ ] Desktop app discovery
-- [ ] GUI: list, search, filters, edit/add/disable dialogs
-- [ ] Key capture widget
-- [ ] Managed-block writer with backup + reload
+- [x] Lua + conf parsers and merge logic
+- [x] Live bindings via `hyprctl`
+- [x] Desktop app discovery
+- [x] GUI: list, search, filters, edit/add/disable dialogs
+- [x] Key capture widget
+- [x] Managed-block writer with backup + reload
 - [ ] Packaging (desktop entry, icon), installation docs

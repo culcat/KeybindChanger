@@ -64,8 +64,6 @@ pub struct BindAction {
 #[derive(Clone, Debug)]
 pub struct UnbindAction {
     pub keys: KeyCombo,
-    pub file: PathBuf,
-    pub line: usize,
     pub managed_id: Option<String>,
 }
 
@@ -131,25 +129,25 @@ pub fn parse_source(src: &str, path: &Path) -> Vec<Action> {
                 }
             }
             "bind_toggle" if matches!(call.object.as_str(), "o") => {
-                if let (Some(keys), Some(toggle)) = (value(0), value(2)) {
-                    if let Some(keys) = value_to_combo(&keys) {
-                        let description = value(1)
-                            .and_then(|v| v.as_str().map(str::to_string))
-                            .unwrap_or_default();
-                        let command = toggle.as_str().map(|t| format!("omarchy-toggle-{t}"));
-                        actions.push(Action::Bind(BindAction {
-                            keys,
-                            description,
-                            command,
-                            raw_dispatcher: None,
-                            mouse: false,
-                            release: false,
-                            repeat: false,
-                            file: path.to_path_buf(),
-                            line,
-                            managed_id: managed_id.clone(),
-                        }));
-                    }
+                if let (Some(keys), Some(toggle)) = (value(0), value(2))
+                    && let Some(keys) = value_to_combo(&keys)
+                {
+                    let description = value(1)
+                        .and_then(|v| v.as_str().map(str::to_string))
+                        .unwrap_or_default();
+                    let command = toggle.as_str().map(|t| format!("omarchy-toggle-{t}"));
+                    actions.push(Action::Bind(BindAction {
+                        keys,
+                        description,
+                        command,
+                        raw_dispatcher: None,
+                        mouse: false,
+                        release: false,
+                        repeat: false,
+                        file: path.to_path_buf(),
+                        line,
+                        managed_id: managed_id.clone(),
+                    }));
                 }
             }
             "bind" if matches!(call.object.as_str(), "hl") => {
@@ -189,8 +187,6 @@ pub fn parse_source(src: &str, path: &Path) -> Vec<Action> {
                 if let Some(keys) = value(0).and_then(|v| value_to_combo(&v)) {
                     actions.push(Action::Unbind(UnbindAction {
                         keys,
-                        file: path.to_path_buf(),
-                        line,
                         managed_id: managed_id.clone(),
                     }));
                 }
@@ -326,25 +322,24 @@ fn extract_exec_cmd(raw: &str) -> Option<String> {
             kind: TokKind::Ident(name),
             ..
         } = &tokens[i]
+            && (name == "exec_cmd" || name == "exec")
         {
-            if name == "exec_cmd" || name == "exec" {
-                // Find the opening paren, then take the first string argument.
-                let mut j = i + 1;
-                if matches!(
-                    tokens.get(j),
-                    Some(Token {
-                        kind: TokKind::Symbol('('),
-                        ..
-                    })
-                ) {
-                    j += 1;
-                    if let Some(Token {
-                        kind: TokKind::Str(s),
-                        ..
-                    }) = tokens.get(j)
-                    {
-                        return Some(s.clone());
-                    }
+            // Find the opening paren, then take the first string argument.
+            let mut j = i + 1;
+            if matches!(
+                tokens.get(j),
+                Some(Token {
+                    kind: TokKind::Symbol('('),
+                    ..
+                })
+            ) {
+                j += 1;
+                if let Some(Token {
+                    kind: TokKind::Str(s),
+                    ..
+                }) = tokens.get(j)
+                {
+                    return Some(s.clone());
                 }
             }
         }
@@ -374,10 +369,10 @@ fn managed_regions(src: &str) -> Vec<(usize, usize, String)> {
             if let Some(id) = rest.strip_suffix(">>>") {
                 open = Some((line_no, id.trim().to_string()));
             }
-        } else if trimmed.starts_with("-- <<< keybindchanger:") {
-            if let Some((start, id)) = open.take() {
-                regions.push((start, line_no, id));
-            }
+        } else if trimmed.starts_with("-- <<< keybindchanger:")
+            && let Some((start, id)) = open.take()
+        {
+            regions.push((start, line_no, id));
         }
     }
 
@@ -724,10 +719,10 @@ fn parse_table(tokens: &[Token], src: &str) -> BTreeMap<String, Value> {
         let key = key.clone();
         let start = i + 2;
         let end = skip_value(tokens, start, last);
-        if end > start {
-            if let Some(value) = parse_value(&tokens[start..end], src) {
-                table.insert(key, value);
-            }
+        if end > start
+            && let Some(value) = parse_value(&tokens[start..end], src)
+        {
+            table.insert(key, value);
         }
         i = end;
     }

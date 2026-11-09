@@ -1,7 +1,10 @@
+mod app;
 mod apps;
 mod hypr;
 mod model;
 
-fn main() {
-    println!("KeybindChanger");
+use gtk4 as gtk;
+
+fn main() -> gtk::glib::ExitCode {
+    app::run()
 }
