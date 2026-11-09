@@ -1,6 +1,6 @@
 # KeybindChanger — Agent Guide
 
-KeybindChanger is a native desktop GUI (Rust + egui/eframe) for browsing,
+KeybindChanger is a native desktop GUI (Rust + GTK4) for browsing,
 editing and creating [Hyprland](https://hypr.land) keybindings.
 
 The primary use case is simple: **see every keybinding in one window, rebind it,
@@ -23,19 +23,18 @@ cargo clippy --all-targets -- -D warnings
 cargo fmt
 ```
 
-System requirements for building on Linux: `libxkbcommon`, `wayland-client`,
-`libEGL`/`libGL` development packages (plus the usual X11 fallback libs).
-Runtime: a Hyprland session for full functionality; the app still opens and
-shows an explanatory banner outside Hyprland.
+System requirements for building on Linux: `gtk4` (4.10+), `libxkbcommon`,
+Wayland (or X11) client libraries and a C compiler. Runtime: a Hyprland session
+for full functionality; the app still opens and shows an explanatory banner
+outside Hyprland.
 
 ## Layout
 
 ```
 src/
-  main.rs          entry point, eframe window setup
-  app.rs           egui app state, screens and dialogs
+  main.rs          entry point, GTK application setup
+  app.rs           GTK window, list, editor dialog, key recorder, app picker
   model.rs         Binding, KeyCombo, Modifier, BindingDraft, Source
-  keys.rs          key combo parsing/formatting and egui key capture mapping
   apps.rs          .desktop application discovery (app picker)
   hypr/
     mod.rs         paths, discovery, hyprctl wrapper
@@ -43,6 +42,9 @@ src/
     conf.rs        classic hyprland.conf parser (bind = ...)
     store.rs       load/merge/persist bindings, managed-block writer
 ```
+
+Set `KBC_CONFIG_DIR` to point the app at an alternative config directory
+(useful for testing). `AGENT.MD` is a symlink to this file for compatibility.
 
 ## How bindings are represented
 

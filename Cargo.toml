@@ -9,13 +9,7 @@ default-run = "keybindchanger"
 
 [dependencies]
 anyhow = "1"
-eframe = { version = "0.37", default-features = false, features = [
-    "default_fonts",
-    "glow",
-    "wayland",
-    "x11",
-] }
-serde = { version = "1", features = ["derive"] }
+gtk4 = { version = "0.11", features = ["v4_10"] }
 serde_json = "1"
 
 [dev-dependencies]
